@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Project A Kedeng Pan</title>
+  </head>
+
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+    <br>
+    <button type="button" onclick = "driveSlower()"> Drive Slower</button>
+    <button type="button" onclick="buttonRunStop()">Run/Stop</button>
+    <button type="button" onclick="driveFaster()"> Drive Faster</button>
+    <button type="button" onclick = "reset()"> Reset</button>
+  <br>
+  <span id="KeyPressResult"> Key Press </span>
+</br>
+  <b> Welcome to Space World! </b>
+  <br>
+
+  <i> Following are the commands you can try: </i>
+<p>Press W and S to move your Lunar Rover, Mouse drag to move your Rocket </p>
+<p>Press p to pause and unpause animation, Press Q and E to control camera on Lunar Rover</p>
+<p>Click on Driver slower or faster the change speed of the Lunar Rover</p>
+<p>Click on Reset to restart the animation</p>
+<p> Click anywhere to change the size of your Lunar Rover </p>
+
+
+
+    <script src="lib/webgl-utils.js"></script>
+    <script src="lib/webgl-debug.js"></script>
+    <script src="lib/cuon-utils.js"></script>
+    <script src="lib/cuon-matrix.js"></script>
+    <script src="lib/cuon-matrix-mod.js"></script>
+    <script src="lib1.js"></script>
+
+    <script src="ProjA.js"></script>
+  </body>
+</html>
