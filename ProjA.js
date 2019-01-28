@@ -43,10 +43,13 @@ var rocketAngle = 30.0;
 var carTranslate = 0.0;
 var cameraAngle = 0.0;
 var carYTranslate = -0.7;
+var carYTranslateStep = 0.0;
 var CAMERA_STEP = 30;
 var carScale = 0.2;
 var carScaleStep = 0.02;
 var isCarScaleChanging = false;
+var wingAngle = 0.0;
+var wingAngleStep = 90.0;
 
 function main() {
    canvas = document.getElementById('webgl');
@@ -448,19 +451,24 @@ function draw() {
 
   // Draw first wing
   modelMatrix.setTranslate(xMouseDrag-0.4, yMouseDrag + 0.3, 0.0);
-  // modelMatrix.scale(1,1,-1);
   modelMatrix.scale(0.1,0.15,0.15);
   modelMatrix.rotate(-rocketAngle, 0.0, 0.0, 1.0);
   modelMatrix.translate(1.0,0.0,0.0);
-  // modelMatrix.rotate(rocketAngle * 0.3 , 0, 0, 1);
 
    modelMatrix.rotate(30, 1,1,0);
    gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
    gl.drawArrays(gl.TRIANGLES, 0, wings.length/floatsPerVertex);
 
+  modelMatrix.translate(1.0,-0.7,0.0);
+  modelMatrix.scale(0.7,0.7,0.7);
+  modelMatrix.rotate(wingAngle, 1,1,0);
+  modelMatrix.translate(2.0,0,0)
+  modelMatrix.translate(0,1,0);
+
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+   gl.drawArrays(gl.TRIANGLES, 0, wings.length/floatsPerVertex);
+
   // //draw second wing
-  // modelMatrix.setTranslate(0.0, 0.0, 0.0);
-// pushMatrix(modelMatrix);
   modelMatrix.setTranslate(xMouseDrag-0.6,yMouseDrag+0.3,0.0);
   modelMatrix.scale(0.1,0.15,0.15);
   modelMatrix.rotate(rocketAngle, 0.0, 0.0, 1.0);
@@ -472,6 +480,18 @@ function draw() {
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.TRIANGLES, 0, wings.length/floatsPerVertex);
 
+
+  modelMatrix.translate(1.0,-0.7,0.0);
+  modelMatrix.scale(0.7,0.7,0.7);
+  modelMatrix.rotate(wingAngle, -1,-1,0);
+
+  modelMatrix.translate(2.0,0,0)
+  modelMatrix.translate(0,1,0);
+
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+   gl.drawArrays(gl.TRIANGLES, 0, wings.length/floatsPerVertex);
+
+  
 
 
 
@@ -499,7 +519,7 @@ function draw() {
 
   pushMatrix(modelMatrix);
 
-  //car light
+  //car top
   modelMatrix.translate(0.8,-0.5,0.4);
   modelMatrix.scale(0.3,0.3,0.3);
   modelMatrix.rotate(90,1,0,0);
@@ -515,6 +535,23 @@ function draw() {
   modelMatrix.rotate(90,0,0,1);
   modelMatrix.scale(0.8,1.0,1.0)
   modelMatrix.rotate(cameraAngle,1,0,0);
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.TRIANGLE_STRIP, cylStart/floatsPerVertex, cylVerts.length/floatsPerVertex);
+  
+  pushMatrix(modelMatrix);
+
+  modelMatrix.translate(0.0,2.5,0.0);
+  modelMatrix.scale(1.5,0.6,0.6);
+  modelMatrix.rotate(90, 0,1,0);
+  modelMatrix.rotate(wingAngle / 2,0,0,1);
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.TRIANGLE_STRIP, cylStart/floatsPerVertex, cylVerts.length/floatsPerVertex);
+
+  modelMatrix = popMatrix();
+  modelMatrix.translate(0.0,-2.5,0.0);
+  modelMatrix.scale(1.5,0.6,0.6);
+  modelMatrix.rotate(90, 0,1,0);
+  modelMatrix.rotate(wingAngle / 2,1,0,0);
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.TRIANGLE_STRIP, cylStart/floatsPerVertex, cylVerts.length/floatsPerVertex);
 
@@ -578,7 +615,16 @@ function timerAll() {
   if(carTranslate >= 5.0 && CAR_SPEED > 0 || carTranslate <= -0.5 && CAR_SPEED < 0) {
     CAR_SPEED = -CAR_SPEED
   }
+
+  
   carTranslate = carTranslate + (CAR_SPEED * elapsed) / 1000.0;
+
+
+  //car Y translation
+  if(carYTranslate >= 0.0 && carYTranslateStep > 0 || carYTranslate <= -1.0 && carYTranslateStep < 0) {
+    carYTranslateStep = -carYTranslateStep;
+  }
+  carYTranslate = carYTranslate + carYTranslateStep * elapsed / 1000.0;
 
   //camera angle
   cameraAngle = cameraAngle + (CAMERA_STEP * elapsed) / 1000.0;
@@ -589,6 +635,11 @@ function timerAll() {
     if (carScale >= 0.3 || carScale <= 0.2) carScaleStep = -carScaleStep;
     carScale += (carScaleStep * elapsed) / 1000.0;
   }
+
+  //wing angle
+  if (wingAngle >= 90.0 && wingAngleStep > 0 || wingAngle <= -90 && wingAngleStep < 0) wingAngleStep = -wingAngleStep;
+  wingAngle = wingAngle + (wingAngleStep * elapsed) / 1000;
+  wingAngleStep %= 360;
 
 }
 
@@ -698,12 +749,12 @@ function myKeyPress(kev) {
     case 119:
       console.log('w pressed');
       document.getElementById('KeyPressResult').innerHTML = 'W Key Pressed';
-      carYTranslate += 0.2;
+      carYTranslateStep+=0.5
       break;
     case 115:
       console.log('s pressed');
       document.getElementById('KeyPressResult').innerHTML = 'S Key Pressed';
-      carYTranslate -= 0.2;
+      carYTranslateStep-=0.5;
       break;
     case 113:
       console.log('q pressed');
