@@ -91,6 +91,11 @@ function main() {
   tick();
 
 
+
+  var mat = new Matrix4();
+  mat.set(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16);
+  console.log(mat);
+
 }
 
 function tick() {
@@ -783,6 +788,9 @@ function reset() {
    carYTranslate = -0.7;
    CAMERA_STEP = 30;
    carScale = 0.2;
+   carYTranslate = -0.7;
+   carYTranslateStep = 0.0;
+   isCarScaleChanging = false;
 
    isDrag = false;
    xMouseClick = 0.0;
